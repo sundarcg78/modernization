@@ -28,7 +28,7 @@ public class Album implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long id;
 
     private String artist;
     private String title;
@@ -45,7 +45,7 @@ public class Album implements Serializable {
         this.rating = rating;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
@@ -90,7 +90,7 @@ public class Album implements Serializable {
     }
 
     public boolean hasId() {
-        return id != null;
+        return id != 0;
     }
 
     public boolean isEquivalent(Album other) {

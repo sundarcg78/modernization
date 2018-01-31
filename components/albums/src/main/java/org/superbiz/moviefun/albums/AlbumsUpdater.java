@@ -24,11 +24,12 @@ public class AlbumsUpdater {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ObjectReader objectReader;
     private final BlobStore blobStore;
-    private final AlbumsBean albumsBean;
+    private final AlbumsRepository albumsRepository;
 
-    public AlbumsUpdater(BlobStore blobStore, AlbumsBean albumsBean) {
+    public AlbumsUpdater(BlobStore blobStore, AlbumsRepository albumsRepository) {
         this.blobStore = blobStore;
-        this.albumsBean = albumsBean;
+        this.albumsRepository = albumsRepository;
+
 
         CsvSchema schema = builder()
             .addColumn("artist")
@@ -49,7 +50,9 @@ public class AlbumsUpdater {
         }
 
         List<Album> albumsToHave = CsvUtils.readFromCsv(objectReader, maybeBlob.get().inputStream);
-        List<Album> albumsWeHave = albumsBean.getAlbums();
+
+        logger.debug("albumsToHave {} ", albumsToHave.size());
+        List<Album> albumsWeHave = albumsRepository.getAlbums();
 
         createNewAlbums(albumsToHave, albumsWeHave);
         deleteOldAlbums(albumsToHave, albumsWeHave);
@@ -62,7 +65,8 @@ public class AlbumsUpdater {
             .stream()
             .filter(album -> albumsWeHave.stream().noneMatch(album::isEquivalent));
 
-        albumsToCreate.forEach(albumsBean::addAlbum);
+        //logger.debug("albumsToCreate {} ", albumsToCreate.count());
+        albumsToCreate.forEach(albumsRepository::addAlbum);
     }
 
     private void deleteOldAlbums(List<Album> albumsToHave, List<Album> albumsWeHave) {
@@ -70,7 +74,7 @@ public class AlbumsUpdater {
             .stream()
             .filter(album -> albumsToHave.stream().noneMatch(album::isEquivalent));
 
-        albumsToDelete.forEach(albumsBean::deleteAlbum);
+        albumsToDelete.forEach(albumsRepository::deleteAlbum);
     }
 
     private void updateExistingAlbums(List<Album> albumsToHave, List<Album> albumsWeHave) {
@@ -79,7 +83,7 @@ public class AlbumsUpdater {
             .map(album -> addIdToAlbumIfExists(albumsWeHave, album))
             .filter(Album::hasId);
 
-        albumsToUpdate.forEach(albumsBean::updateAlbum);
+        albumsToUpdate.forEach(albumsRepository::updateAlbum);
     }
 
     private Album addIdToAlbumIfExists(List<Album> existingAlbums, Album album) {
