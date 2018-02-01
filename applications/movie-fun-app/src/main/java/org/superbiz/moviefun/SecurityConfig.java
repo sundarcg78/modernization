@@ -1,6 +1,8 @@
 package org.superbiz.moviefun;
 
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -14,6 +16,7 @@ import org.springframework.web.client.RestOperations;
 
 @Configuration
 @EnableOAuth2Sso
+@EnableDiscoveryClient
 @Profile("!development")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
@@ -25,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
     }
 
+    @LoadBalanced
     @Bean
     public RestOperations restTemplate(OAuth2ProtectedResourceDetails resource, OAuth2ClientContext oauth2ClientContext) {
         return new OAuth2RestTemplate(resource, oauth2ClientContext);
