@@ -1,5 +1,7 @@
 package org.superbiz.moviefun.movies;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.List;
 public class MoviesController {
 
     private MoviesRepository moviesRepository;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public MoviesController(MoviesRepository moviesRepository) {
         this.moviesRepository = moviesRepository;

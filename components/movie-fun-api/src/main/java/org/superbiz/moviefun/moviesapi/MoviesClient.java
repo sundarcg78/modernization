@@ -1,5 +1,7 @@
 package org.superbiz.moviefun.moviesapi;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -16,6 +18,8 @@ public class MoviesClient {
     private static ParameterizedTypeReference<List<MovieInfo>> movieListType = new ParameterizedTypeReference<List<MovieInfo>>() {
     };
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     public MoviesClient(String moviesUrl, RestOperations restOperations) {
         this.moviesUrl = moviesUrl;
         this.restOperations = restOperations;
@@ -30,7 +34,10 @@ public class MoviesClient {
     }
 
     public int countAll() {
-        return restOperations.getForObject(moviesUrl + "/count", Integer.class);
+        logger.debug("moviesurl: {}, ", moviesUrl);
+        int count = restOperations.getForObject(moviesUrl + "/count", Integer.class);
+        logger.debug("count: {}, ", count);
+        return count;
     }
 
 

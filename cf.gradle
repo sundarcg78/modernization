@@ -3,6 +3,7 @@ def services = [
     [type: "p-mysql", plan: "100mb", instance: "album-database"],
     [type: "p-identity", plan: "basic-sso", instance: "movie-fun-sso"],
     [type: "p-service-registry", plan: "standard", instance: "movie-fun-registry"],
+    [type: "p-config-server", plan: "standard", instance: "movie-fun-config", config: "config-server.json"],
 ]
 
 task teardownPcfEnv {
@@ -15,7 +16,7 @@ task teardownPcfEnv {
         ].each { println it.execute().text }
 
         services.each {
-            println "cf delete -f $it.instance".execute().text
+            println "cf delete-service -f $it.instance".execute().text
         }
     }
 }
