@@ -32,6 +32,8 @@ ext.setupProdFlywayExtension = { extension, cfAppName ->
         extension.user = user
         extension.password = password
         extension.url = url
+        extension.baselineOnMigrate = true;
+        extension.baselineVersion = 1;
     }
 
     return extension
